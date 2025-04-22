@@ -30,8 +30,8 @@ https://ineedajob.streamlit.app/
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/smart-job-assistant.git
-   cd smart-job-assistant
+   git clone https://github.com/OUDESIGNLAB/INEEDAJOB.git
+   cd INEEDAJOB
    ```
 
 2. Create a virtual environment:
