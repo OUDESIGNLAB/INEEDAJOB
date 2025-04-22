@@ -31,21 +31,36 @@ https://ineedajob.streamlit.app/
 1. Clone this repository:
    ```
    git clone https://github.com/OUDESIGNLAB/INEEDAJOB.git
+   ```
+   ```
    cd INEEDAJOB
    ```
 
 2. Create a virtual environment:
    ```
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+   Try:
+   ```
+   python3 -m venu venu
+   ```
+   If the previous command didn't work.
+   
+   # On Mac:
+   ```
+   source venv/bin/activate
+   ```
+   # On Windows:
+   ```
+   venv\Scripts\activate
    ```
 
-3. Install the requirements:
+4. Install the requirements:
    ```
    pip install -r requirements.txt
    ```
 
-4. Run the application:
+5. Run the application:
    ```
    streamlit run app.py
    ```
