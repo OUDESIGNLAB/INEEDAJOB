@@ -46,11 +46,11 @@ https://ineedajob.streamlit.app/
    ```
    If the previous command didn't work.
    
-   # On Mac:
+   ### On Mac:
    ```
    source venv/bin/activate
    ```
-   # On Windows:
+   ### On Windows:
    ```
    venv\Scripts\activate
    ```
