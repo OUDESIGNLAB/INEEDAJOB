@@ -1406,22 +1406,26 @@ def main():
                 # Personal info form
                 st.session_state['building_profile']['personal_info']['name'] = st.text_input(
                     "Full Name", 
-                    value=st.session_state['building_profile']['personal_info'].get('name', '')
+                    value=st.session_state['building_profile']['personal_info'].get('name', ''),
+                    key="builder_name"
                 )
                 
                 st.session_state['building_profile']['personal_info']['email'] = st.text_input(
                     "Email", 
-                    value=st.session_state['building_profile']['personal_info'].get('email', '')
+                    value=st.session_state['building_profile']['personal_info'].get('email', ''),
+                    key="builder_email"
                 )
                 
                 st.session_state['building_profile']['personal_info']['phone'] = st.text_input(
                     "Phone", 
-                    value=st.session_state['building_profile']['personal_info'].get('phone', '')
+                    value=st.session_state['building_profile']['personal_info'].get('phone', ''),
+                    key="builder_phone"
                 )
                 
                 st.session_state['building_profile']['personal_info']['location'] = st.text_input(
                     "Location", 
-                    value=st.session_state['building_profile']['personal_info'].get('location', '')
+                    value=st.session_state['building_profile']['personal_info'].get('location', ''),
+                    key="builder_location"
                 )
             
             with skills_tab:
@@ -1470,15 +1474,15 @@ def main():
                         st.markdown(f"**{exp.get('position', '')} at {exp.get('company', '')}** ({exp.get('duration', '')})")
                         if st.button(f"Remove Entry #{i+1}"):
                             st.session_state['building_profile']['experience'].pop(i)
-                            st.experimental_rerun()
+                            st.rerun()
                 
                 # Form for adding new experience
                 st.write("Add New Experience:")
                 new_exp = {
-                    "company": st.text_input("Company Name"),
-                    "position": st.text_input("Position/Title"),
-                    "duration": st.text_input("Duration (e.g., 2021-Present)"),
-                    "location": st.text_input("Location"),
+                    "company": st.text_input("Company Name", key="new_exp_company"),
+                    "position": st.text_input("Position/Title", key="new_exp_position"),
+                    "duration": st.text_input("Duration (e.g., 2021-Present)", key="new_exp_duration"),
+                    "location": st.text_input("Location", key="new_exp_location"),
                     "responsibilities": []
                 }
                 
@@ -1495,7 +1499,7 @@ def main():
                     if new_exp["company"] and new_exp["position"]:
                         st.session_state['building_profile']['experience'].append(new_exp)
                         st.success("Experience added!")
-                        st.experimental_rerun()
+                        st.rerun()
                     else:
                         st.error("Please enter at least a company name and position")
             
@@ -1509,14 +1513,14 @@ def main():
                         st.markdown(f"**{edu.get('degree', '')}** from {edu.get('institution', '')}")
                         if st.button(f"Remove Education #{i+1}"):
                             st.session_state['building_profile']['education'].pop(i)
-                            st.experimental_rerun()
+                            st.rerun()
                 
                 # Form for adding new education
                 st.write("Add New Education:")
                 new_edu = {
-                    "institution": st.text_input("Institution Name"),
-                    "degree": st.text_input("Degree/Qualification"),
-                    "graduation_date": st.text_input("Graduation Year"),
+                    "institution": st.text_input("Institution Name", key="new_edu_institution"),
+                    "degree": st.text_input("Degree/Qualification", key="new_edu_degree"),
+                    "graduation_date": st.text_input("Graduation Year", key="new_edu_graduation"),
                     "relevant_coursework": []
                 }
                 
@@ -1529,7 +1533,7 @@ def main():
                     if new_edu["institution"] and new_edu["degree"]:
                         st.session_state['building_profile']['education'].append(new_edu)
                         st.success("Education added!")
-                        st.experimental_rerun()
+                        st.rerun()
                     else:
                         st.error("Please enter at least an institution and degree")
             
@@ -2071,7 +2075,7 @@ def main():
                 st.json(st.session_state['profile'])
                 if st.button("Clear Existing Profile"):
                     st.session_state['profile'] = None
-                    st.experimental_rerun()
+                    st.rerun()
             else:
                 st.warning("No existing profile found. Please create one first.")
                 
@@ -2461,7 +2465,7 @@ Analysis:
                     # Delete button
                     if st.button("Delete Document", key=f"delete_{idx}"):
                         st.session_state['generated_documents'].pop(idx)
-                        st.experimental_rerun()
+                        st.rerun()
 
 if __name__ == "__main__":
     main()
