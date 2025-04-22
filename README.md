@@ -2,6 +2,12 @@
 
 A streamlined AI-powered application to help job seekers analyze job postings, match them to their skills, and generate tailored application documents.
 
+# Website
+
+If you want to see it in action, take a look here!
+
+https://ineedajob.streamlit.app/
+
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ## Features
