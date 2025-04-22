@@ -1232,6 +1232,10 @@ def main():
     if 'model_generation' not in st.session_state:
         st.session_state['model_generation'] = "creative"
     
+    # Initialize generated documents storage if not exists
+    if 'generated_documents' not in st.session_state:
+        st.session_state['generated_documents'] = []
+    
     # Setup API client in sidebar
     client = setup_api()
     
@@ -1249,7 +1253,7 @@ def main():
         st.session_state['application_docs'] = None
     
     # Tabs for different functions
-    tab1, tab2, tab3, tab4 = st.tabs(["Profile", "Job Analysis", "Generate Documents", "Application Tracker"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Profile", "Job Analysis", "Generate Documents", "Generated Documents"])
     
     # Tab 1: Profile Management
     with tab1:
@@ -2310,6 +2314,17 @@ def main():
                             # Store in session state
                             st.session_state['application_docs'] = docs
                             
+                            # Add to generated documents history
+                            st.session_state['generated_documents'].append({
+                                'job_title': st.session_state['job_analysis']['job_data']['title'],
+                                'company': st.session_state['job_analysis']['job_data']['company'],
+                                'date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                'cover_letter': cover_letter_content,
+                                'resume_bullets': resume_bullets,
+                                'match_analysis': st.session_state['job_analysis']['match_analysis'],
+                                'job_data': st.session_state['job_analysis']['job_data']
+                            })
+                            
                             # Display documents
                             st.subheader("Cover Letter")
                             st.text_area("Copy or edit as needed:", docs["cover_letter"], height=300)
@@ -2321,14 +2336,7 @@ def main():
                                 for bullet in bullets:
                                     st.write(f"• {bullet}")
                                     
-                            # Save to tracker
-                            save_button = st.button("Save Application")
-                            if save_button:
-                                result = save_application(
-                                    st.session_state['job_analysis'],
-                                    st.session_state['application_docs']
-                                )
-                                st.success(result)
+                            st.success("Documents generated successfully! You can find them in the 'Generated Documents' tab.")
                         except json.JSONDecodeError as e:
                             st.error(f"Error parsing resume bullets: {str(e)}")
                             st.code(resume_content, language="json")
@@ -2336,40 +2344,124 @@ def main():
                         st.error(f"Error generating documents: {str(e)}")
                         st.error("Please try a different model or check your OpenRouter API key.")
     
-    # Tab 4: Application Tracker
+    # Tab 4: Generated Documents
     with tab4:
-        st.header("Application Tracker")
+        st.header("Generated Documents")
         
-        try:
-            applications_df = pd.read_csv("job_applications.csv")
-            st.dataframe(applications_df[["date", "company", "position", "match_score", "status"]])
-            
-            # Allow status updates
-            if not applications_df.empty:
-                selected_app = st.selectbox(
-                    "Select application to update:",
-                    applications_df["position"] + " at " + applications_df["company"]
-                )
-                
-                if selected_app:
-                    idx = applications_df.index[applications_df["position"] + " at " + applications_df["company"] == selected_app][0]
-                    new_status = st.selectbox(
-                        "Update status:",
-                        ["Ready to Apply", "Applied", "Interview Scheduled", "Rejected", "Offer Received", "Accepted"]
-                    )
+        if not st.session_state['generated_documents']:
+            st.info("No documents have been generated yet. Generate some documents in the 'Generate Documents' tab to see them here.")
+        else:
+            # Display all generated documents
+            for idx, doc in enumerate(st.session_state['generated_documents']):
+                with st.expander(f"Document {idx + 1}: {doc['job_title']} at {doc['company']} ({doc['date']})"):
+                    # Display job details
+                    st.write(f"**Job Title:** {doc['job_title']}")
+                    st.write(f"**Company:** {doc['company']}")
+                    st.write(f"**Generated on:** {doc['date']}")
                     
-                    if st.button("Update Status"):
-                        applications_df.at[idx, "status"] = new_status
-                        applications_df.to_csv("job_applications.csv", index=False)
-                        st.success("Status updated successfully!")
+                    # Display match analysis
+                    st.subheader("Job Match Analysis")
+                    if 'match_analysis' in doc:
+                        match = doc['match_analysis']
+                        st.write(f"**Overall Match Score:** {match.get('overall_match', 'N/A')}/10")
+                        st.write(f"**Skills Match:** {match.get('skills_match', 'N/A')}")
+                        
+                        # Create columns for matching and missing skills
+                        match_col, miss_col = st.columns(2)
+                        
+                        with match_col:
+                            st.write("🟢 Matching Skills:")
+                            for skill in match.get('matching_skills', []):
+                                st.write(f"✓ {skill}")
+                        
+                        with miss_col:
+                            st.write("🔴 Missing Skills:")
+                            for skill in match.get('missing_skills', []):
+                                st.write(f"✗ {skill}")
+                        
+                        if "explanation" in match:
+                            st.write("**Analysis:**")
+                            st.write(match["explanation"])
+                    
+                    # Display cover letter
+                    st.subheader("Cover Letter")
+                    st.text_area("Cover Letter", doc['cover_letter'], height=200, key=f"cover_letter_{idx}")
+                    
+                    # Display resume bullets
+                    st.subheader("Resume Bullets")
+                    for exp, bullets in doc['resume_bullets'].items():
+                        st.write(f"**{exp}**")
+                        for bullet in bullets:
+                            st.write(f"• {bullet}")
+                    
+                    # Download buttons
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        # Download cover letter as TXT
+                        st.download_button(
+                            label="Download Cover Letter",
+                            data=doc['cover_letter'],
+                            file_name=f"cover_letter_{doc['job_title']}_{doc['company']}.txt",
+                            mime="text/plain",
+                            key=f"download_cover_{idx}"
+                        )
+                    
+                    with col2:
+                        # Format resume bullets as text
+                        resume_text = ""
+                        for exp, bullets in doc['resume_bullets'].items():
+                            resume_text += f"{exp}\n"
+                            for bullet in bullets:
+                                resume_text += f"• {bullet}\n"
+                            resume_text += "\n"
+                        
+                        # Download resume bullets as TXT
+                        st.download_button(
+                            label="Download Resume",
+                            data=resume_text,
+                            file_name=f"resume_{doc['job_title']}_{doc['company']}.txt",
+                            mime="text/plain",
+                            key=f"download_resume_{idx}"
+                        )
+                    
+                    with col3:
+                        # Create combined document
+                        combined_text = f"""Cover Letter
+{'-' * 50}
+{doc['cover_letter']}
+
+Resume
+{'-' * 50}
+{resume_text}
+
+Job Match Analysis
+{'-' * 50}
+Overall Match Score: {doc['match_analysis'].get('overall_match', 'N/A')}/10
+Skills Match: {doc['match_analysis'].get('skills_match', 'N/A')}
+
+Matching Skills:
+{chr(10).join(f"✓ {skill}" for skill in doc['match_analysis'].get('matching_skills', []))}
+
+Missing Skills:
+{chr(10).join(f"✗ {skill}" for skill in doc['match_analysis'].get('missing_skills', []))}
+
+Analysis:
+{doc['match_analysis'].get('explanation', 'N/A')}
+"""
+                        
+                        # Download complete application as TXT
+                        st.download_button(
+                            label="Download Complete Application",
+                            data=combined_text,
+                            file_name=f"complete_application_{doc['job_title']}_{doc['company']}.txt",
+                            mime="text/plain",
+                            key=f"download_complete_{idx}"
+                        )
+                    
+                    # Delete button
+                    if st.button("Delete Document", key=f"delete_{idx}"):
+                        st.session_state['generated_documents'].pop(idx)
                         st.experimental_rerun()
-            else:
-                st.info("No applications found. Add some applications first.")
-                    
-        except FileNotFoundError:
-            st.info("No applications tracked yet.")
-        except Exception as e:
-            st.error(f"Error loading applications: {str(e)}")
 
 if __name__ == "__main__":
     main()
