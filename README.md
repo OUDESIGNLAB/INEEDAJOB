@@ -2,9 +2,15 @@
 
 A streamlined AI-powered application to help job seekers analyze job postings, match them to their skills, and generate tailored application documents.
 
+# Website
+
+If you want to see it in action, take a look here!
+
+https://ineedajob.streamlit.app/
+
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 
-## 🌟 Features
+## Features
 
 - **Intelligent Profile Management**: Create, import, or build your professional profile
 - **Advanced Job Analysis**: Automatically extract key requirements from job listings and check how well your profile matches
@@ -13,14 +19,14 @@ A streamlined AI-powered application to help job seekers analyze job postings, m
 - **Application Tracking**: Keep track of all your job applications
 - **AI Integration**: Choose from 300+ AI models through OpenRouter for different tasks
 
-## 📋 Requirements
+## Requirements
 
 - Python 3.7+
 - Streamlit
 - OpenRouter API key
 - Internet connection
 
-## 🚀 Installation
+## Installation
 
 1. Clone this repository:
    ```
@@ -44,7 +50,7 @@ A streamlined AI-powered application to help job seekers analyze job postings, m
    streamlit run app.py
    ```
 
-## 🔑 API Key Setup
+## API Key Setup
 
 To use this application, you'll need an OpenRouter API key:
 
@@ -52,7 +58,7 @@ To use this application, you'll need an OpenRouter API key:
 2. Go to https://openrouter.ai/keys to create an API key
 3. Enter your key in the app's sidebar when prompted
 
-## 📊 Using the Application
+## Using the Application
 
 ### 1. Profile Management
 
@@ -84,13 +90,13 @@ Create your professional profile using one of these methods:
 - Track application status (Ready to Apply, Applied, Interview, etc.)
 - Update status as you progress through your job search
 
-## 🔒 Privacy Considerations
+## Privacy Considerations
 
 - Your profile data is stored only in the browser session (not permanently)
 - API keys are never saved to disk - you'll need to re-enter on each session
 - Export your profile to save it between sessions
 
-## 🤖 AI Models
+## AI Models
 
 The application uses OpenRouter to access a variety of AI models:
 
@@ -102,11 +108,11 @@ The application uses OpenRouter to access a variety of AI models:
 
 You can also select any other model available through OpenRouter.
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - OpenRouter for providing access to multiple AI models
 - Streamlit for the web application framework
